@@ -41,7 +41,7 @@ def processReweBon(reweBon):
     for product in reweBon:
         try:
             print(f"{OK} {int(product['quantity'])}x {product['productName']}, EAN: {product['nan']}, Stückpreis: {product['unitPrice']/100}€")
-            addProductToStock(product['nan'], int(product['quantity']), 1, product['unitPrice']/100, GROCY_LOCATION_ID)
+            addProductToStock(product['nan'], int(product['quantity']), product['unitPrice']/100, GROCY_LOCATION_ID)
         except:
             print(f"{WARN} Produkt mit EAN {product['nan']} ({int(product['quantity'])}x {product['totalPrice']}) hat keinen Produktnamen, es handelt sich dabei wahrscheinlich um Pfand, Saison- oder Thekenware.")
 
