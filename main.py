@@ -2,7 +2,7 @@
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning # type: ignore pylint: disable=E0401
 from colorTerminal import OK, WARN, ERROR
-from config import GROCY_LOCATION_ID
+from config import GROCY_LOCATION_ID, BON_HISTORY
 from grocyConnector import addProductToStock
 
 # CONFIGURATION
@@ -13,11 +13,20 @@ def fetchReweBon(RTSP):
     receiptList = requests.get(RECEIPT_URL, cookies={"rstp": RTSP}, timeout=10).json()
     print(f"{OK} Empfange eBon-Liste der letzten Einkäufe..")
 
+    bonHistory = 10
+
     optionReceipts = receiptList['items']
-    for x in range(0, 5, 1):
+    for x in range(0, BON_HISTORY, 1):
         print(f"ID: {x}; Vom: {optionReceipts[x]['receiptTimestamp']}; Summe: {optionReceipts[x]['receiptTotalPrice']/100}€")
 
-    option = int(input("Welchen Bon möchtest du an Grocy senden? (ID): "))
+    while True:
+        option = int(input("Welchen Bon möchtest du an Grocy senden? (ID): "))
+        if 0 <= option < BON_HISTORY:
+            break
+        else:
+            print(f"{ERROR} Bitte wähle einen Bon zwischen 0 und {BON_HISTORY-1} aus.")
+
+    
     reweBon = requests.get(RECEIPT_URL + optionReceipts[option]['receiptId'], cookies={"rstp": RTSP}, timeout=10)
     
     if reweBon.status_code == 200:
