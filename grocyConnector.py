@@ -1,6 +1,6 @@
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning # type: ignore pylint: disable=E0401
-from colorTerminal import OK, WARN, ERROR    
+from colorTerminal import OK, WARN, ERROR
 from config import GROCY_API_URL, GROCY_API_KEY                           # pylint: disable=E0611
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning) # type: ignore pylint: disable=E1101
@@ -17,14 +17,14 @@ ENDPOINT_GET_BYID = GROCY_BASE_URL + "/objects/products?query%5B%5D=id%3D"
 def addProductToStock(itemEAN: int, amount: int, price, locationID: int):
     """Add a Product to GROCY INSTANCE via EAN"""
 
-    with open(IGNORE_FILE, 'r') as data:
+    with open(IGNORE_FILE, 'r', encoding='utf-8') as data:
         for EAN in data:
             try:
                 if itemEAN == int(EAN.strip()):
                     return 0
             except:
                 print(f"{ERROR} Konnte aktuelle EAN nicht mit der Ignore-Liste vergleichen")
-                
+
     print(f"Suche nach '{itemEAN}' in der Datenbank..")
     try:
         productByBarcode = requests.get(ENDPOINT_GET_BYBARCODE + str(itemEAN), headers=GROCY_HEADER, timeout=10, verify=False).json()
@@ -76,6 +76,7 @@ def addProductToStock(itemEAN: int, amount: int, price, locationID: int):
                     print(f"{OK} Produkt {productName} wurde angelegt. ID des Produkts: {productID}\nFüge EAN hinzu...")
                     newEAN = {
                         "barcode": itemEAN,
+                        "product_id": productID,
                         "amount": 1,
                         "shopping_location_id": locationID
                     }
@@ -121,6 +122,6 @@ def addProductToStock(itemEAN: int, amount: int, price, locationID: int):
                 except:
                     print(f"{ERROR} Produkt nicht gefunden, versuche es noch einmal.")
         elif naProduct == 9:
-            with open(IGNORE_FILE, 'a') as data:
+            with open(IGNORE_FILE, 'a', encoding='utf-8') as data:
                 print(f"{OK} {itemEAN} wird zukünftig ignoriert.")
                 data.write(str(itemEAN) + '\n')
