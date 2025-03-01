@@ -1,4 +1,6 @@
 # Grocy-Rewe-Connect
+> ⚠️ **Hinweis:**  
+> Dieses Projekt wird nicht mehr weiterentwickelt, da REWE die API geschlossen hat.
 
 Dieses Projekt ermöglicht es, Einkaufsbelege von der REWE-Website abzurufen und die Daten in die Grocy-Anwendung zu importieren.
 
